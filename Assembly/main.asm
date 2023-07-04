@@ -3,8 +3,8 @@
 ; Disciplina: Arquitetura e Organização De Computadores
 
 segment .data
-    LF equ 0xA                      ; 10 = 0x0A, vai para a linha debaixo
-    NULL equ 0xD                    ; 13 = 0x0D, volta para o início da linha
+    LF equ 0xA                      		; 10 = 0x0A, vai para a linha debaixo
+    NULL equ 0xD                    		; 13 = 0x0D, volta para o início da linha
     SYS_CALL equ 0x80
     SYS_EXIT equ 0x1
     SYS_READ equ 0x3
@@ -21,55 +21,55 @@ section .data
     var dw 0
     
     msg_dia db "Digite o dia: "                 ; string para imprimir
-	msg_dia_length equ $-msg_dia				; tamanho da string
+	msg_dia_length equ $-msg_dia		; tamanho da string
     msg_mes db "Digite o mês: "
 	msg_mes_length equ $-msg_mes
     msg_ano db "Digite o ano: "
 	msg_ano_length equ $-msg_ano
 
     sabado_msg db "O dia da semana é sábado.", LF, NULL
-    tam_sab equ $- sabado_msg
+    	tam_sab equ $- sabado_msg
     domingo_msg db "O dia da semana é domingo.", LF, NULL
-    tam_dom equ $- domingo_msg
+    	tam_dom equ $- domingo_msg
     segunda_msg db "O dia da semana é segunda-feira." , LF, NULL
-    tam_seg equ $- segunda_msg
+    	tam_seg equ $- segunda_msg
     terca_msg db "O dia da semana é terça-feira.", LF, NULL
-    tam_ter equ $- terca_msg
+    	tam_ter equ $- terca_msg
     quarta_msg db "O dia da semana é quarta-feira.", LF, NULL
-    tam_qua equ $- quarta_msg
+   	 tam_qua equ $- quarta_msg
     quinta_msg db "O dia da semana é quinta-feira.", LF, NULL
-    tam_qui equ $- quinta_msg
+    	tam_qui equ $- quinta_msg
     sexta_msg db "O dia da semana é sexta-feira.", LF, NULL
-    tam_sex equ $- sexta_msg
+    	tam_sex equ $- sexta_msg
     nada_msg db "Não existe.", LF, NULL
-    tam_nada equ $- nada_msg
+    	tam_nada equ $- nada_msg
     
 section .bss
-    dia_var resb 1						; reserva 4 bytes de espaço
-	mes_var resb 1
-	ano_var resb 1
+    dia_var resb 1				; reserva 4 bytes de espaço
+    mes_var resb 1
+    ano_var resb 1
     
 section .text
     global _start
 
 _start:
     ; adquirir dados do dia
-    mov eax, 4 							; sys_write
-    mov ebx, 1 							; std_out
-    mov ecx, msg_dia 					; mensagem para escrever
+    mov eax, 4 					; sys_write
+    mov ebx, 1 					; std_out
+    mov ecx, msg_dia 				; mensagem para escrever
     mov edx, msg_dia_length 			; tamanho da mensagem
-    int	SYS_CALL 						; chamar kernal
+    int	SYS_CALL 				; chamar kernal
 
-    mov eax, 3							; sys_read
-    mov ebx, 0 							; std_in
-    mov ecx, dia_var 					; variável para armazenamento
-    mov edx, 3 					        ; tamanho da variável
-    int	SYS_CALL 						; chamar kernal
+    mov eax, 3					; sys_read
+    mov ebx, 0 					; std_in
+    mov ecx, dia_var 				; variável para armazenamento
+    mov edx, 3 					; tamanho da variável
+    int	SYS_CALL 				; chamar kernal
     
-    lea esi, [dia_var]                  ; indica a variável que quer mudar
-    mov ecx, 0x2                        ; indica o tamanho do int
-    call string_to_int                  ; chama a função para transformar string para int 
-    mov [dia], eax                      ; move o int em eax para a variável
+    lea esi, [dia_var]                  	; indica a variável que quer mudar
+    mov ecx, 0x2                        	; indica o tamanho do int
+    call string_to_int                  	; chama a função para transformar string para int 
+    mov [dia], eax                      	; move o int em eax para a variável
     
     ; adquirir dados do mês
     mov eax, 4
@@ -116,17 +116,18 @@ comparacoes:
 calculo_zeller:
     ; Aplicando a fórmula de Zeller
     ; dia_semana = (dia + ((a + 1) * 26) / 10 + b + b/4 + c/4 - c*5) % 7
-    mov eax, dword [mes]            ; Carrega o valor de 'mes' em eax
-    add eax, 1                      ; Adiciona o valor de '1' a eax
-    mov dword [dia_semana], eax     ; Armazena o resultado em 'dia_semana'
+
+    mov eax, dword [mes]            		; Carrega o valor de 'mes' em eax
+    add eax, 1                      		; Adiciona o valor de '1' a eax
+    mov dword [dia_semana], eax     		; Armazena o resultado em 'dia_semana'
     
-    imul eax, 26                    ; multiplica por 26
+    imul eax, 26                    		; multiplica por 26
     
     xor edx, edx
-    mov cx, 10                      ; divide por 10 
+    mov cx, 10                      		; divide por 10 
     div cx
 
-    add eax, dword[dia]             ; soma com o dia
+    add eax, dword[dia]             		; soma com o dia
     mov dword[dia_semana], eax
     
     ; b
@@ -270,9 +271,9 @@ nada:
    
 fim:
     ; Finalizar programa
-    mov eax, SYS_EXIT                       ; sys_exit
-    mov ebx, RET_EXIT                       ; error code 0 (success)
-    int SYS_CALL                            ; chamar kernal
+    mov eax, SYS_EXIT                       	; sys_exit
+    mov ebx, RET_EXIT                       	; error code 0 (success)
+    int SYS_CALL                            	; chamar kernal
     
 string_to_int:
    xor ebx, ebx
@@ -282,7 +283,7 @@ prox_digito_string:
    inc esi
    sub al, '0'
    imul ebx, 0xA
-   add ebx, eax                             ; ebx = ebx*10 + eax
-   loop prox_digito_string                  ; while (--ecx)
+   add ebx, eax                             	; ebx = ebx*10 + eax
+   loop prox_digito_string                  	; while (--ecx)
    mov eax, ebx
    ret
